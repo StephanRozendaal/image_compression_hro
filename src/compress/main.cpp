@@ -6,6 +6,8 @@
 
 using namespace Magick;
 int main(int argc, char** argv) {
+
+  DCT_T type = D2;
   // char* input = {"alien.png"};
   InitializeMagick(*argv);
   Image image;
@@ -25,7 +27,7 @@ int main(int argc, char** argv) {
     for(int y = 0; y+8 < image.rows(); y+=8) {
       cache = image.getConstPixels(x,y,8,8);
       auto temp = pixelpacket2mat(cache);
-      dct(temp);
+      dct(temp, type);
     }}
 
   //fftw_destroy_plan(plan);

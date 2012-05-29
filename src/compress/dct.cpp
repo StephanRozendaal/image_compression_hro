@@ -47,14 +47,11 @@ arma::mat compute_dct(arma::mat& inp) {
   return out;
 }
 
-typedef enum { D2= 0, D1XD1, EIGEN} DCT;
-
-void dct(arma::mat& inp) {
+void dct(arma::mat& inp, DCT_T type) {
   //level-off van pixel-blok 128 afhalen van elk element.
   arma::mat M(inp);
   for (arma::mat::iterator it = M.begin(); it != M.end(); it++)
     *it -= 128;
-  DCT type = D2;
   //lambda functie met keuze voor type transformatie.
   auto func = [&]() {
     switch(type) {
@@ -117,8 +114,8 @@ void dct(arma::mat& inp) {
     *Cit = round((*Dit / *Qit));
   }
   //output naar het scherm, voor controle.
-  std::cout.precision(5);
-  std::cout << "matrix M" << std::endl << M << "matrix T" << std::endl << T
-	    << "matrix T inverse:" << std::endl << Tt << "matrix D:"
-	    << std::endl << D << "matrix C:" << std::endl << C << std::endl;
+  //   std::cout.precision(5);
+  // std::cout << "matrix M" << std::endl << M << "matrix T" << std::endl << T
+  // 	    << "matrix T inverse:" << std::endl << Tt << "matrix D:"
+  // 	    << std::endl << D << "matrix C:" << std::endl << C << std::endl;
 }
