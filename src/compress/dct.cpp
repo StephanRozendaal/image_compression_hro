@@ -74,16 +74,17 @@ void dct(arma::mat& inp, DCT_T type) {
       for(int i = 0; i < 8; i++) {
 	plan = fftw_plan_r2r_1d(8, M.colptr(i), Ttemp.colptr(i), FFTW_REDFT10, FFTW_MEASURE);
 	fftw_execute(plan);
+	fftw_destroy_plan(plan);
       }
       Ttemp = trans(Ttemp);
       arma::mat T(8,8);
       for(int i = 0; i < 8; i++) {
 	plan = fftw_plan_r2r_1d(8, Ttemp.colptr(i), T.colptr(i), FFTW_REDFT10, FFTW_MEASURE);
 	fftw_execute(plan);
+	fftw_destroy_plan(plan);
       }
       Ttemp = trans(Ttemp);
       T = T + Ttemp;
-      fftw_destroy_plan(plan);
       return T;
     }
     /** *************************************************************************

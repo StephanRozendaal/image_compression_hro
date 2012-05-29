@@ -7,7 +7,7 @@
 using namespace Magick;
 int main(int argc, char** argv) {
 
-  DCT_T type = D2;
+  DCT_T type = D1XD1;
   // char* input = {"alien.png"};
   InitializeMagick(*argv);
   Image image;
