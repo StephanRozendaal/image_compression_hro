@@ -8,6 +8,22 @@
 #include <armadillo>
 #include <cmath>
 #include <fftw3.h>
+static int comprr_ar [] = {
+0, 
+1, 8, 
+16, 9, 2, 
+3, 10, 17, 24, 
+32, 25, 18, 11, 4, 
+5, 12, 19, 26, 33, 40, 
+48, 41, 34, 27, 20, 13, 6, 
+7, 14, 21, 28, 35, 42, 49, 56, 
+57, 50, 43, 36, 29, 22, 15, 
+23, 30, 37, 44, 51, 58, 
+59, 52, 45, 38, 31, 
+39, 46, 53, 60, 
+61, 54, 47, 
+55, 62, 
+63};
 
 arma::mat quantisation_mat(int quality) {
   arma::mat mat;
@@ -47,7 +63,7 @@ arma::mat compute_dct(arma::mat& inp) {
   return out;
 }
 
-void dct(arma::mat& inp, DCT_T type) {
+std::list<int> dct(arma::mat& inp, DCT_T type) {
   //level-off van pixel-blok 128 afhalen van elk element.
   arma::mat M(inp);
   for (arma::mat::iterator it = M.begin(); it != M.end(); it++)
@@ -114,9 +130,20 @@ void dct(arma::mat& inp, DCT_T type) {
        Dit++ && Qit++ && Cit++) {
     *Cit = round((*Dit / *Qit));
   }
+  //comprimeer matrix C door nullen op het eind weg te laten.
+  std::list<int> output;
+  bool first_not_zero = false;
+  for(int i = 63; i >= 0; i--) { // begin aan het eind van het matrix
+    if(C[comprr_ar[i]] != 0 && !first_not_zero) //is geen waarde nul
+      first_not_zero = true;
+    if(first_not_zero) // waardes nul gehad
+      output.push_front((int)C[comprr_ar[i]]); // waardes voorin de list pushen zodat de waardes linksboven in de matrix als eerste komen.
+  }
+  // std::cout << "matrix M" << std::endl << M << "matrix T" << std::endl << T
+  //  	    << "matrix T inverse:" << std::endl << Tt << "matrix D:"
+  //  	    << std::endl << D << "matrix C:" << std::endl << C << std::endl;
+
+  return output;
   //output naar het scherm, voor controle.
   //   std::cout.precision(5);
-  // std::cout << "matrix M" << std::endl << M << "matrix T" << std::endl << T
-  // 	    << "matrix T inverse:" << std::endl << Tt << "matrix D:"
-  // 	    << std::endl << D << "matrix C:" << std::endl << C << std::endl;
 }
