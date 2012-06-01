@@ -147,3 +147,67 @@ std::list<int> dct(arma::mat& inp, DCT_T type) {
   //output naar het scherm, voor controle.
   //   std::cout.precision(5);
 }
+
+arma::mat reverse_dct(std::list<int>& input, DCT_T type) {
+  arma::imat A(8, 8);
+  int count = 0;
+  for(auto it = input.begin(); it != input.end(); it++) { 
+    A[comprr_ar[count]] = *it;
+    count++;
+  }
+  arma::mat Q = quantisation_mat(50);
+  arma::mat C = A % Q;
+  //lambda functie met keuze voor type transformatie.
+  auto func = [&]() {
+    switch(type) {
+      /** ************************************************************************
+       *  doe de DCT transform gelijk als 2D, output is matrix T.
+       **/
+    case D2 : {
+      arma::mat T(8, 8);
+      plan = fftw_plan_r2r_2d(8, 8, C.memptr(), T.memptr(),
+			      FFTW_REDFT00, FFTW_REDFT00, FFTW_MEASURE);
+      fftw_execute(plan);
+      fftw_destroy_plan(plan);
+      return T;
+    }
+    /** *************************************************************************
+     *Doe de DCT transform in 2 stappen, eerst vertical en daarna horizontaal als 1D transformaties, combineer de eindresultaten.
+     **/
+    case D1XD1 : {
+      arma::mat Ttemp(8,8);
+      for(int i = 0; i < 8; i++) {
+	plan = fftw_plan_r2r_1d(8, C.colptr(i), Ttemp.colptr(i), FFTW_REDFT10, FFTW_MEASURE);
+	fftw_execute(plan);
+	fftw_destroy_plan(plan);
+      }
+      Ttemp = trans(Ttemp);
+      arma::mat T(8,8);
+      for(int i = 0; i < 8; i++) {
+	plan = fftw_plan_r2r_1d(8, Ttemp.colptr(i), T.colptr(i), FFTW_REDFT10, FFTW_MEASURE);
+	fftw_execute(plan);
+	fftw_destroy_plan(plan);
+      }
+      Ttemp = trans(Ttemp);
+      T = T + Ttemp;
+      return T;
+    }
+    /** *************************************************************************
+     *  Deze werkt nog niet.
+     **/
+    // case EIGEN : {
+    //   arma::mat T = compute_dct(C);
+    //   return T;
+    // }
+    default:
+    break;
+    }};
+  arma::mat T = func();
+  //tel weer 128 bij elke waarde op, als het hoger is dan 255 zet dan de waarde op 255.
+  for (arma::mat::iterator it = T.begin(); it != T.end(); it++) {
+    *it += 128;
+    if(*it > 255)
+      *it = 255;
+  }
+  return T;
+}
