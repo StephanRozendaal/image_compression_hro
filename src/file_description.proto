@@ -11,6 +11,6 @@ message my_encoded_block { // voor een blok encodeerde data
 }
 
 message my_file { // gehele file, je krijg dus een file_header, met daarachter een variabel aantal encoded_block berichten.
-  required my_file_header hdr = 1;
-  repeated my_encoded_block blcks = 2; //[packed = true];
+  required my_file_header hdr = 2;
+  repeated my_encoded_block blcks = 1; //[packed = true];
 }

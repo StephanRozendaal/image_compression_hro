@@ -116,7 +116,7 @@ std::list<int> dct(arma::mat& inp, DCT_T type) {
   //voer de lambda-functie uit
   arma::mat T = func();
   //matrix Tt is T getransponeerd
-  arma::mat Tt = arma::trans(T);
+  //arma::mat Tt = arma::trans(T);
   //matrix D bevat 64 DCT coefficienten.
   // arma::mat D = T * M * Tt;
   arma::mat D = T;
@@ -142,7 +142,7 @@ std::list<int> dct(arma::mat& inp, DCT_T type) {
   // std::cout << "matrix M" << std::endl << M << "matrix T" << std::endl << T
   //  	    << "matrix T inverse:" << std::endl << Tt << "matrix D:"
   //  	    << std::endl << D << "matrix C:" << std::endl << C << std::endl;
-
+  //std::cout << "matrix C: " << C << std::endl;
   return output;
   //output naar het scherm, voor controle.
   //   std::cout.precision(5);
