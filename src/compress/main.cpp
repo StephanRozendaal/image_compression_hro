@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
     return -1;
   }
   //check of er een output naam is.
-  if(argc > 3)
+  if(argc > 2)
     fname = argv[2];
   else
     fname = "output.steef";

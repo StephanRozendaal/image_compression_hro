@@ -77,7 +77,7 @@ std::list<int> dct(arma::mat& inp, DCT_T type) {
     case D2 : {
       arma::mat T(8, 8);
       plan = fftw_plan_r2r_2d(8, 8, M.memptr(), T.memptr(),
-			      FFTW_REDFT00, FFTW_REDFT00, FFTW_MEASURE);
+			      FFTW_REDFT10, FFTW_REDFT10, FFTW_MEASURE);
       fftw_execute(plan);
       fftw_destroy_plan(plan);
       return T;
@@ -114,12 +114,7 @@ std::list<int> dct(arma::mat& inp, DCT_T type) {
     break;
     }};
   //voer de lambda-functie uit
-  arma::mat T = func();
-  //matrix Tt is T getransponeerd
-  //arma::mat Tt = arma::trans(T);
-  //matrix D bevat 64 DCT coefficienten.
-  // arma::mat D = T * M * Tt;
-  arma::mat D = T;
+  arma::mat D = func();
   //geef een quantization matrix voor een bepaalde kwaliteit.
   arma::mat Q = quantisation_mat(50);
   // bouw matrix C op door af te ronden van (D/Q).
@@ -139,17 +134,13 @@ std::list<int> dct(arma::mat& inp, DCT_T type) {
     if(first_not_zero) // waardes nul gehad
       output.push_front((int)C[comprr_ar[i]]); // waardes voorin de list pushen zodat de waardes linksboven in de matrix als eerste komen.
   }
-  // std::cout << "matrix M" << std::endl << M << "matrix T" << std::endl << T
-  //  	    << "matrix T inverse:" << std::endl << Tt << "matrix D:"
-  //  	    << std::endl << D << "matrix C:" << std::endl << C << std::endl;
-  //std::cout << "matrix C: " << C << std::endl;
   return output;
-  //output naar het scherm, voor controle.
-  //   std::cout.precision(5);
 }
 
 arma::mat reverse_dct(std::list<int>& input, DCT_T type) {
   arma::imat A(8, 8);
+  //zet die shit op nul jonge!
+  A.zeros();
   int count = 0;
   for(auto it = input.begin(); it != input.end(); it++) { 
     A[comprr_ar[count]] = *it;
@@ -166,7 +157,7 @@ arma::mat reverse_dct(std::list<int>& input, DCT_T type) {
     case D2 : {
       arma::mat T(8, 8);
       plan = fftw_plan_r2r_2d(8, 8, C.memptr(), T.memptr(),
-			      FFTW_REDFT00, FFTW_REDFT00, FFTW_MEASURE);
+			      FFTW_REDFT01, FFTW_REDFT01, FFTW_MEASURE);
       fftw_execute(plan);
       fftw_destroy_plan(plan);
       return T;
@@ -177,14 +168,14 @@ arma::mat reverse_dct(std::list<int>& input, DCT_T type) {
     case D1XD1 : {
       arma::mat Ttemp(8,8);
       for(int i = 0; i < 8; i++) {
-	plan = fftw_plan_r2r_1d(8, C.colptr(i), Ttemp.colptr(i), FFTW_REDFT10, FFTW_MEASURE);
+	plan = fftw_plan_r2r_1d(8, C.colptr(i), Ttemp.colptr(i), FFTW_REDFT01, FFTW_MEASURE);
 	fftw_execute(plan);
 	fftw_destroy_plan(plan);
       }
       Ttemp = trans(Ttemp);
       arma::mat T(8,8);
       for(int i = 0; i < 8; i++) {
-	plan = fftw_plan_r2r_1d(8, Ttemp.colptr(i), T.colptr(i), FFTW_REDFT10, FFTW_MEASURE);
+	plan = fftw_plan_r2r_1d(8, Ttemp.colptr(i), T.colptr(i), FFTW_REDFT01, FFTW_MEASURE);
 	fftw_execute(plan);
 	fftw_destroy_plan(plan);
       }

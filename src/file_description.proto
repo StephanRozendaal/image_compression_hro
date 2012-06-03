@@ -1,16 +1,16 @@
 message my_file_header { // header aan het begin van de file voor instellingen en info
-  required sfixed32 no_blocks = 1; // totaal aantal blokken
-  required sfixed32 no_rows = 2; // totaal aantal rijen
-  required sfixed32 no_columns = 3; // totaal aantal kolommen
+  required int32 no_blocks = 1; // totaal aantal blokken
+  required int32 no_rows = 2; // totaal aantal rijen
+  required int32 no_columns = 3; // totaal aantal kolommen
 }
 
 message my_encoded_block { // voor een blok encodeerde data
-  repeated sfixed32 color_red = 1;//[packed = true];
-  repeated sfixed32 color_green = 2;//[packed = true];
-  repeated sfixed32 color_blue = 3;//[packed = true];
+  repeated sint32 color_red = 1 [packed = true];
+  repeated sint32 color_green = 2 [packed = true];
+  repeated sint32 color_blue = 3 [packed = true];
 }
 
 message my_file { // gehele file, je krijg dus een file_header, met daarachter een variabel aantal encoded_block berichten.
   required my_file_header hdr = 2;
-  repeated my_encoded_block blcks = 1; //[packed = true];
+  repeated my_encoded_block blcks = 1;
 }
