@@ -31,24 +31,21 @@ int main(int argc, char** argv) {
   int no_rows = hdr->no_rows();
   int no_columns = hdr->no_columns();
   //haal kleur X op van positie Y uit de block-datastructuur.
-  auto func = [&](int i, PIX_COL kleur) {
+  auto func = [&](int i, PIX_COL color) {
     my_encoded_block* blck = fl->mutable_blcks(i);
-    std::unique_ptr<std::list<int>> list;
-    int* col;
-    switch(kleur) {
+    std::list<int> list;
+    switch(color) {
     case COLOR_BLUE :
-      col = blck->color_blue();
-      list = new std::list<int>(col, col+sizeof(col) / sizeof(int));
+      std::copy(blck->color_blue().begin(), blck->color_blue().end(), list.begin());
     case COLOR_RED:
-      col = blck->color_red();
-      list = std::list<int>(col, col+sizeof(col) / sizeof(int));
+      std::copy(blck->color_red().begin(), blck->color_red().end(), list.begin());
     case COLOR_GREEN:
-      col = blck->color_green();
-      list = std::list<int>(col, col+sizeof(col) / sizeof(int));
-    case default:
-      list = nullptr;
+      std::copy(blck->color_green().begin(), blck->color_green().end(), list.begin());
     }
-    return list;
+    return std::move(list);
   };
+  std::list<int> blauw = func(1, COLOR_BLUE);
+  std::cout << "block size: " << blauw.size() << std::endl;
 
+  //uiteindelijk: laat het plaatjes zien met image.display().
 }
