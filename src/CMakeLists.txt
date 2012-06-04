@@ -1,6 +1,11 @@
 file(GLOB COMPRESSIE "./compress/*.cpp")
+file(GLOB COMPR_MAIN "./compress/main.cpp")
+file(GLOB VIEW_MAIN "./viewer/main.cpp")
+list(REMOVE_ITEM COMPRESSIE ${COMPR_MAIN})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_HDRS file_description.proto)
 
-add_executable(dct_compress ${COMPRESSIE} ${PROTO_SRCS} ${PROTO_HDRS})
+add_executable(dct_compress ${COMPRESSIE} ${COMPR_MAIN} ${PROTO_SRCS} ${PROTO_HDRS})
+add_executable(dct_viewer ${COMPRESSIE} ${VIEW_MAIN} ${PROTO_SRCS} ${PROTO_HDRS})
 target_link_libraries(dct_compress ${PTHREADS_LIBRARY} ${ImageMagick_LIBRARIES} ${ARMADILLO_LIBRARIES} ${FFTW_LIBRARIES} ${PROTOBUF_LIBRARIES})
+target_link_libraries(dct_viewer ${PTHREADS_LIBRARY} ${ImageMagick_LIBRARIES} ${ARMADILLO_LIBRARIES} ${FFTW_LIBRARIES} ${PROTOBUF_LIBRARIES})

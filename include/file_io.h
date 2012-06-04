@@ -1,5 +1,6 @@
 #pragma once
 #include <list>
+#include <memory>
 #include "file_description.pb.h"
 
 class File_io {
@@ -14,5 +15,5 @@ class File_io {
   void set_header();
   void add_block(std::list<int>& blck_red, std::list<int>& blck_green, std::list<int>& blck_blue);
   void save_to_disk(std::string& fname, int no_blocks, int no_rows, int no_columns);
-  void load_from_disk(std::string& fname);
+  std::unique_ptr<my_file> load_from_disk(std::string& fname);
 };

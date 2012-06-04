@@ -42,6 +42,12 @@ void File_io::save_to_disk(std::string& fname, int no_blocks, int no_rows, int n
   output.close();
 }
 
-void File_io::load_from_disk(std::string& fname) {
-
+std::unique_ptr<my_file> File_io::load_from_disk(std::string& fname) {
+  std::fstream input(fname, std::ios::in | std::ios::binary);
+  std::unique_ptr<my_file> fl(new my_file());
+  if(!fl->ParseFromIstream(&input)) {
+    std::cerr << "failed to read from file" << std::endl;
+  }
+  input.close();
+  return fl;
 }
