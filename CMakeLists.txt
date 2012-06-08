@@ -22,3 +22,4 @@ include_directories(${PROTOBUF_INCLUDE_DIRS})
 find_package(Pthreads REQUIRED)
 include_directories(${PTHREADS_INCLUDE_DIRS})
 add_subdirectory(src)
+#notitie: armadillo heeft ook boost::math nodig

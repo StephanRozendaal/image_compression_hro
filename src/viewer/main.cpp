@@ -17,35 +17,62 @@ int main(int argc, char** argv) {
     std::cout << "no filename specified" << std::endl;
     return -1;
   }
+  //laad de file naar my_file object.
   std::unique_ptr<my_file> fl = io.load_from_disk(fname);
+  //heeft my_file een header?
   if(!fl->has_hdr()) {
     std::cout << "file has no header" << std::endl;
     return -1;
   }
   my_file_header* hdr = fl->mutable_hdr();
+  //heeft deze file wel geencodeerde blokken?
   if(fl->blcks_size() <= 0) {
     std::cout << "file has no encoded blocks" << std::endl;
     return -1;
   }
+  //haal kleur X op van positie Y uit de block-datastructuur.
+  auto func = [&](int i, PIX_COL color) {
+    const my_encoded_block blck = fl->blcks(i);
+    std::list<int32_t> list;
+    switch(color) {
+    case COLOR_BLUE :
+      std::copy(blck.color_blue().begin(), blck.color_blue().end(), list.begin());
+    case COLOR_RED :
+      std::copy(blck.color_red().begin(), blck.color_red().end(), list.begin());
+    case COLOR_GREEN :
+      std::copy(blck.color_green().begin(), blck.color_green().end(), list.begin());
+    }
+    return list;
+  };
   int no_blcks = hdr->no_blocks();
   int no_rows = hdr->no_rows();
   int no_columns = hdr->no_columns();
-  //haal kleur X op van positie Y uit de block-datastructuur.
-  auto func = [&](int i, PIX_COL color) {
-    my_encoded_block* blck = fl->mutable_blcks(i);
-    std::list<int> list;
-    switch(color) {
-    case COLOR_BLUE :
-      std::copy(blck->color_blue().begin(), blck->color_blue().end(), list.begin());
-    case COLOR_RED:
-      std::copy(blck->color_red().begin(), blck->color_red().end(), list.begin());
-    case COLOR_GREEN:
-      std::copy(blck->color_green().begin(), blck->color_green().end(), list.begin());
-    }
-    return std::move(list);
-  };
-  std::list<int> blauw = func(1, COLOR_BLUE);
-  std::cout << "block size: " << blauw.size() << std::endl;
+  Image out_image(Geometry((no_blcks/no_rows)*8, (no_blcks/no_columns)*8), "white");
+  out_image.type(TrueColorType);
+  out_image.modifyImage();
+  Pixels image(out_image);
 
+  std::list<int32_t> lst;
+  arma::mat mat;
+  int blck_count = 0;
+  for(int x = 0; x+8 <= image.columns(); x+=8) {
+    for(int y = 0; y+8 <= image.rows(); y+=8) {
+      PixelPacket* cache = image.set(x, y, 8, 8);
+      lst = func(blck_count, COLOR_BLUE);
+      mat = reverse_dct(lst, type);
+      mat2pixelpacket(mat, cache, COLOR_BLUE);
+      lst = func(blck_count, COLOR_RED);
+      mat = reverse_dct(lst, type);
+      mat2pixelpacket(mat, cache, COLOR_RED);
+      lst = func(blck_count, COLOR_GREEN);
+      mat = reverse_dct(lst, type);
+      mat2pixelpacket(mat, cache, COLOR_GREEN);
+      blck_count++;
+      image.sync();
+    }}
+  std::cout << "image grootte: " << (no_blcks/no_columns)*8 << "bij " << (no_blcks/no_rows)*8 << std::endl;
+
+  std::cout << "totaal: " << no_blcks << "rijen: " << no_rows << "kolommen: " << no_columns << std::endl;
   //uiteindelijk: laat het plaatjes zien met image.display().
+  out_image.display();
 }
