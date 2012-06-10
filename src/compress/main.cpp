@@ -13,6 +13,7 @@ int main(int argc, char** argv) {
   InitializeMagick(*argv);
   Image image;
   image.magick("RGB");
+  image.depth(8);
   try {
     image.read(argv[1]);
   } catch ( std::exception er) {
@@ -24,9 +25,6 @@ int main(int argc, char** argv) {
     fname = argv[2];
   else
     fname = "output.steef";
-  image.quantizeColorSpace(sRGBColorspace);
-  image.quantizeColors( 256 );
-  image.quantize();
   const PixelPacket *cache = 0;
   /**
    * waarde cache heeft een PixelPacket array van 64 posities.

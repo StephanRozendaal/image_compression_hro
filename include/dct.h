@@ -14,7 +14,7 @@
 typedef enum { D2= 0, D1XD1, EIGEN} DCT_T; // DCT type
 typedef enum { COLOR_BLUE = 0, COLOR_RED, COLOR_GREEN} PIX_COL; // Pixel kleur type
 std::list<int> dct(arma::mat& inp, DCT_T type);
-arma::mat reverse_dct(std::list<int>& input, DCT_T type);
+arma::mat reverse_dct(std::list<int32_t>& input, DCT_T type);
 arma::mat pixelpacket2mat (const Magick::PixelPacket* input, PIX_COL kleur);
 void mat2pixelpacket(const arma::mat& input, Magick::PixelPacket* output, PIX_COL kleur);
 static fftw_plan plan;

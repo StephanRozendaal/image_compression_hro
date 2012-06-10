@@ -34,14 +34,17 @@ int main(int argc, char** argv) {
   auto func = [&](int i, PIX_COL color) {
     const my_encoded_block blck = fl->blcks(i);
     std::list<int32_t> list;
-    switch(color) {
-    case COLOR_BLUE :
-      std::copy(blck.color_blue().begin(), blck.color_blue().end(), list.begin());
-    case COLOR_RED :
-      std::copy(blck.color_red().begin(), blck.color_red().end(), list.begin());
-    case COLOR_GREEN :
-      std::copy(blck.color_green().begin(), blck.color_green().end(), list.begin());
-    }
+    if(color == COLOR_BLUE) {
+      for(auto it = blck.color_blue().begin(); it != blck.color_blue().end(); it++)
+      	list.push_back(*it);
+    } else if(color == COLOR_RED) {
+      for(auto it = blck.color_red().begin(); it != blck.color_red().end(); it++)
+      	list.push_back(*it);
+    } else if(color == COLOR_GREEN) {
+      for(auto it = blck.color_green().begin(); it != blck.color_green().end(); it++)
+     	list.push_back(*it);
+    } else {}
+   
     return list;
   };
   int no_blcks = hdr->no_blocks();
@@ -49,14 +52,15 @@ int main(int argc, char** argv) {
   int no_columns = hdr->no_columns();
   Image out_image(Geometry((no_blcks/no_rows)*8, (no_blcks/no_columns)*8), "white");
   out_image.type(TrueColorType);
+  out_image.depth(8);
   out_image.modifyImage();
   Pixels image(out_image);
 
   std::list<int32_t> lst;
   arma::mat mat;
   int blck_count = 0;
-  for(int x = 0; x+8 <= image.columns(); x+=8) {
-    for(int y = 0; y+8 <= image.rows(); y+=8) {
+  for(int x = 0; x+8 <= out_image.columns(); x+=8) {
+    for(int y = 0; y+8 <= out_image.rows(); y+=8) {
       PixelPacket* cache = image.set(x, y, 8, 8);
       lst = func(blck_count, COLOR_BLUE);
       mat = reverse_dct(lst, type);
@@ -69,7 +73,9 @@ int main(int argc, char** argv) {
       mat2pixelpacket(mat, cache, COLOR_GREEN);
       blck_count++;
       image.sync();
-    }}
+    }
+    
+  }
   std::cout << "image grootte: " << (no_blcks/no_columns)*8 << "bij " << (no_blcks/no_rows)*8 << std::endl;
 
   std::cout << "totaal: " << no_blcks << "rijen: " << no_rows << "kolommen: " << no_columns << std::endl;

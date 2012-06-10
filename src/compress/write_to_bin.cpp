@@ -33,7 +33,7 @@ void File_io::save_to_disk(std::string& fname, int no_blocks, int no_rows, int n
  
   for(auto it = blocks.begin(); it != blocks.end(); it++) {
     auto temp_block = fl.add_blcks();
-    *temp_block = *it;
+    temp_block->CopyFrom(*it);
   }
   if(!fl.SerializeToOstream(&output)) {
     std::cerr << "failed to write to file" << std::endl;

@@ -137,7 +137,7 @@ std::list<int> dct(arma::mat& inp, DCT_T type) {
   return output;
 }
 
-arma::mat reverse_dct(std::list<int>& input, DCT_T type) {
+arma::mat reverse_dct(std::list<int32_t>& input, DCT_T type) {
   arma::imat A(8, 8);
   //zet die shit op nul jonge!
   A.zeros();
