@@ -11,11 +11,10 @@ int main(int argc, char** argv) {
   File_io io;
   DCT_T type = D2;
   InitializeMagick(*argv);
-  Image image;
-  image.magick("RGB");
-  image.depth(8);
+  Image out_image;
+  out_image.magick("RGB");
   try {
-    image.read(argv[1]);
+    out_image.read(argv[1]);
   } catch ( std::exception er) {
     std::cerr << "exception: " << er.what() << std::endl;
     return -1;
@@ -26,15 +25,16 @@ int main(int argc, char** argv) {
   else
     fname = "output.steef";
   const PixelPacket *cache = 0;
+  Pixels image(out_image);
   /**
    * waarde cache heeft een PixelPacket array van 64 posities.
    * de 2 for-loopen itereren over de hele input image.
    **/
   std::list<int> block_red, block_blue, block_green;
   int x,y;
-  for(x = 0; x+8 <= image.columns(); x+=8) {
-    for(y = 0; y+8 <= image.rows(); y+=8) {
-      cache = image.getConstPixels(x,y,8,8); // haal 8x8 pixels op.
+  for(x = 0; x+8 <= out_image.columns(); x+=8) {
+    for(y = 0; y+8 <= out_image.rows(); y+=8) {
+      cache = image.getConst(x,y,8,8); // haal 8x8 pixels op.
       auto mat_red = pixelpacket2mat(cache, COLOR_RED); // zet pixels van kleur rood om in arma::mat
       auto mat_blue = pixelpacket2mat(cache, COLOR_BLUE);
       auto mat_green = pixelpacket2mat(cache, COLOR_GREEN);

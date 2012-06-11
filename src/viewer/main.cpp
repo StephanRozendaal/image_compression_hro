@@ -50,9 +50,8 @@ int main(int argc, char** argv) {
   int no_blcks = hdr->no_blocks();
   int no_rows = hdr->no_rows();
   int no_columns = hdr->no_columns();
-  Image out_image(Geometry((no_blcks/no_rows)*8, (no_blcks/no_columns)*8), "white");
-  out_image.type(TrueColorType);
-  out_image.depth(8);
+  Image out_image(Geometry((no_blcks/no_rows)*8, (no_blcks/no_columns)*8), "black");
+  out_image.magick("RGB");
   out_image.modifyImage();
   Pixels image(out_image);
 

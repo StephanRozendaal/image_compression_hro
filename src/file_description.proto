@@ -5,9 +5,9 @@ message my_file_header { // header aan het begin van de file voor instellingen e
 }
 
 message my_encoded_block { // voor een blok encodeerde data
-  repeated sfixed32 color_red = 1; //[packed = true];
-  repeated sfixed32 color_green = 2; //[packed = true];
-  repeated sfixed32 color_blue = 3; //[packed = true];
+  repeated sint32 color_red = 1 [packed = true];
+  repeated sint32 color_green = 2 [packed = true];
+  repeated sint32 color_blue = 3 [packed = true];
 }
 
 message my_file { // gehele file, je krijg dus een file_header, met daarachter een variabel aantal encoded_block berichten.
