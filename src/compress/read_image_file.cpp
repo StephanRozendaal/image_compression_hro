@@ -29,6 +29,6 @@ void mat2pixelpacket(const arma::mat& input, Magick::PixelPacket* output, PIX_CO
       output[i].red = (input[i] * 257);
   case COLOR_GREEN :
     for(int i = 0; i < 64; i++)
-      output[i].red = (input[i] * 257);
+      output[i].green = (input[i] * 257);
   }
 }
